@@ -5,9 +5,11 @@ Utilities package to create fixtures for API test
 Sanitize any part of `vcrpy` fixtures using regex
 ```python
 from ufixtures.UfixVcr import *
+
 ufixtures = UfixVcr(cassette_dir='fixtures/cassettes')
 vcr = ufixtures.sanitize(attributes=['regex', 'for', 'attributes'],
                          targets=['other regex', 'for', 'targets'])
+
 with vcr.use_cassette('fixture_name.yml'):
     # your request here
 ```
