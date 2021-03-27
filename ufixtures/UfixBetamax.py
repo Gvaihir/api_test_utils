@@ -6,7 +6,7 @@ from typing import Dict, Callable
 from requests import Session
 
 
-class Ufixtures(object):
+class UfixBetamax(object):
     def __init__(self, session: Session, cassette_dir: str):
 
         self.vcr = Betamax(session)

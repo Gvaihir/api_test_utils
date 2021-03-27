@@ -11,5 +11,6 @@ setup(
     description='create fixtures and sanitize them',
     python_requires='>=3.6',
     install_requires=['betamax',
-                      'betamax_serializers']
+                      'betamax_serializers',
+                      'vcrpy']
 )
