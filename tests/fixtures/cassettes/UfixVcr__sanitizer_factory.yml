@@ -1,0 +1,43 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Authorization:
+      - OBSCURED
+      User-Agent:
+      - OBSCURED
+      X-Amz-Content-SHA256:
+      - OBSCURED
+      X-Amz-Date:
+      - OBSCURED
+      X-Amz-Security-Token:
+      - OBSCURED
+    method: HEAD
+    uri: https://ucsf-genomics-prod-project-data.s3.us-west-2.amazonaws.com/OBSCURED/scito/mock/fastq/config_test.ini
+  response:
+    body:
+      string: ''
+    headers:
+      Accept-Ranges:
+      - bytes
+      Content-Length:
+      - '2705'
+      Content-Type:
+      - binary/octet-stream
+      Date:
+      - Sat, 27 Mar 2021 18:04:19 GMT
+      ETag:
+      - '"683a0aec891cdf31994f73cc5fd937ed"'
+      Last-Modified:
+      - Fri, 26 Mar 2021 17:33:23 GMT
+      Server:
+      - AmazonS3
+      x-amz-id-2: OBSCURED
+      x-amz-request-id: OBSCURED
+      x-amz-server-side-encryption: OBSCURED
+      x-amz-server-side-encryption-aws-kms-key-id: OBSCURED
+      x-amz-version-id: OBSCURED
+    status:
+      code: 200
+      message: OK
+version: 1

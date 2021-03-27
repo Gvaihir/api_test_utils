@@ -16,8 +16,8 @@ class TestUfixVcr(TestCase):
         s3 = session.resource('s3')
         s3_obj = s3.Object('ucsf-genomics-prod-project-data', 'anton/scito/mock/fastq/config_test.ini')
         with self.ufixtures.vcr.use_cassette('UfixVcr__sanitizer_factory.yml',
-                                             before_record_request=self.ufixtures._request_sanitizer_factory(['X-Amz'],['anton']),
-                                             before_record_response=self.ufixtures._response_sanitizer_factory(['x-amz-server-side-encryption-aws-kms-key-id'],['kms'])
+                                             before_record_request=self.ufixtures._request_sanitizer_factory(['X-Amz', 'Author', 'User'],['anton']),
+                                             before_record_response=self.ufixtures._response_sanitizer_factory(['x-amz'],['kms'])
                                              ):
             content_length = s3_obj.content_length
         with open(os.path.join(curr_dir, 'fixtures/cassettes/UfixVcr__sanitizer_factory.yml'), 'r') as f:
