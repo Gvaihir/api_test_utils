@@ -1,45 +1,63 @@
 import vcr
 import re
-from typing import List
+from typing import List, Dict
+
 
 class UfixVcr(object):
     def __init__(self, cassette_dir: str, **kwargs):
-        settings = {
+        '''
+        Instantiate a vcrpy cassette.
+        :param cassette_dir: str. Cassette output dir
+        :param kwargs: Dict. Kwargs to pass to the vcr object
+        '''
+        self.settings = {
             'serializer': 'yaml',
             'cassette_library_dir': cassette_dir,
             'record_mode': 'once'
         }
-        settings.update(**kwargs)
-        self.vcr = vcr.VCR(**settings)
+        self.settings.update(**kwargs)
 
-    def sanitize(self, headers: List, replacement: str='OBSCURED by Ufixtures') -> vcr.VCR:
-        settings = self.vcr.get_merged_config(**{'filter_headers': [(x, replacement) for x in headers]})
-        return vcr.VCR(**settings)
+    def sanitize(self, attributes: List = None, targets: List = None) -> vcr.VCR:
+        '''
+        Sanitizes all parts of request and response
+        :param attributes: List. Keys in a request or response. Accepts regex strings
+        :param targets: List. Values in a equest or response. Accepts regex strings
+        :return:
+        '''
+        self.settings.update({
+            'before_record_request': self._request_sanitizer_factory(attributes, targets),
+            'before_record_response': self._response_sanitizer_factory(attributes, targets)
+        })
+        return vcr.VCR(**self.settings)
 
-
-    def _request_sanitizer_factory(self, attributes: List, targets: List):
+    def _request_sanitizer_factory(self, attributes: List = None, targets: List = None):
         def _sanitize(request):
-            if request == None:
+            if request is None:
                 return None
             parsed_request = request._to_dict()
-            attribute_regexes = [re.compile(s) for s in attributes]
-            target_regexes = [re.compile(s) for s in targets]
-            updated_parsed_request = self._unpacker(parsed_request, attribute_regexes, target_regexes)
+            updated_parsed_request = self._dict_sanitizer(parsed_request, attributes, targets)
             updated_request = request._from_dict(updated_parsed_request)
             return updated_request
+
         return _sanitize
 
-
-    def _response_sanitizer_factory(self, attributes: List, targets: List):
+    def _response_sanitizer_factory(self, attributes: List = None, targets: List = None):
         def _sanitize(response):
-            if response == None:
+            if response is None:
                 return None
-            attribute_regexes = [re.compile(s) for s in attributes]
-            target_regexes = [re.compile(s) for s in targets]
-            updated_parsed_response = self._unpacker(response, attribute_regexes, target_regexes)
+            updated_parsed_response = self._dict_sanitizer(response, attributes, targets)
             return updated_parsed_response
+
         return _sanitize
 
+    def _dict_sanitizer(self, unsanitized: Dict, attributes: List = None, targets: List = None) -> Dict:
+        none_placeholder = ['RandomStringThatIsVeryUnlikelyToExist']
+        attributes = attributes if attributes is not None else none_placeholder
+        targets = targets if targets is not None else none_placeholder
+        attribute_regexes = [re.compile(s) for s in attributes]
+        target_regexes = [re.compile(s) for s in targets]
+        sanitized = self._unpacker(unsanitized, attribute_regexes, target_regexes)
+        return sanitized
 
     def _unpacker(self, hash_type, attributes, targets):
         for i in hash_type:
@@ -53,5 +71,3 @@ class UfixVcr(object):
                 except TypeError:
                     continue
         return hash_type
-
-

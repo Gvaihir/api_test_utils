@@ -7,8 +7,12 @@ from requests import Session
 
 
 class UfixBetamax(object):
-    def __init__(self, session: Session, cassette_dir: str):
-
+    def __init__(self, session: Session, cassette_dir: str) -> None:
+        '''
+        Instantiate a Betamax cassette
+        :param session: Session. requests.Session object
+        :param cassette_dir: str. Cassette output dir
+        '''
         self.vcr = Betamax(session)
         self.vcr.register_serializer(pretty_json.PrettyJSONSerializer)
         if not os.path.exists(cassette_dir):
@@ -17,7 +21,12 @@ class UfixBetamax(object):
             config.cassette_library_dir = cassette_dir
             config.default_cassette_options['serialize_with'] = 'prettyjson'
 
-    def sanitize(self, target_field: str):
+    def sanitize(self, target_field: str) -> cassette:
+        '''
+        Obscures only specific headers in request. Other parts of cassette - in development
+        :param target_field: str. Header name
+        :return: cassette with callable to sanitize specified fields
+        '''
         with self.vcr.configure() as config:
             config.before_record(callback=self._sanitizer_factory(target_field))
         return self.vcr
