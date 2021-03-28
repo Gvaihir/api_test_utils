@@ -42,3 +42,21 @@ class TestUfixVcr(TestCase):
             self.assertTrue("OBSCURED" in fixture['interactions'][0]['request']['uri'])
             self.assertFalse("anton" in fixture['interactions'][0]['request']['uri'])
 
+
+    def test_sanitize_body(self):
+        session = boto3.Session(profile_name='gvaihir')
+        l = session.client('lambda')
+        vcr = self.ufixtures.sanitize(attributes=['(?i)X-Amz', 'Author', 'User'],
+                                      targets=['arn:aws:.*'])
+        with vcr.use_cassette('UfixVcr_sanitize_body.yml'):
+            try:
+                response = l.get_function(FunctionName='unittest_')
+            except:
+                response = None
+        with open(os.path.join(curr_dir, 'fixtures/cassettes/UfixVcr_sanitize_body.yml'), 'r') as f:
+            fixture = yaml.safe_load(f)
+            self.assertTrue(isinstance(fixture, dict))
+            self.assertEqual(fixture['interactions'][0]['request']['headers']['X-Amz-Date'][0], 'OBSCURED')
+            self.assertTrue("OBSCURED" in fixture['interactions'][0]['response']['body']['string'])
+            self.assertFalse("arn" in fixture['interactions'][0]['response']['body']['string'])
+

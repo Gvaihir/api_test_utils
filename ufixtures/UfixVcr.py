@@ -54,20 +54,18 @@ class UfixVcr(object):
         none_placeholder = ['RandomStringThatIsVeryUnlikelyToExist']
         attributes = attributes if attributes is not None else none_placeholder
         targets = targets if targets is not None else none_placeholder
-        attribute_regexes = [re.compile(s) for s in attributes]
-        target_regexes = [re.compile(s) for s in targets]
-        sanitized = self._unpacker(unsanitized, attribute_regexes, target_regexes)
-        return sanitized
-
-    def _unpacker(self, hash_type, attributes, targets):
-        for i in hash_type:
-            if isinstance(hash_type[i], dict):
-                hash_type.update({i: self._unpacker(hash_type[i], attributes, targets)})
+        replacement = 'OBSCURED'
+        for i in unsanitized:
+            if isinstance(unsanitized[i], dict):
+                unsanitized.update({i: self._dict_sanitizer(unsanitized[i], attributes, targets)})
             else:
                 try:
-                    hash_type[i] = 'OBSCURED' if any([x.search(i) for x in attributes]) else hash_type[i]
+                    unsanitized[i] = replacement if any([re.search(x, i) for x in attributes]) else unsanitized[i]
                     for target in targets:
-                        hash_type[i] = target.sub('OBSCURED', hash_type[i])
+                        if isinstance(unsanitized[i], bytes):
+                            unsanitized[i] = re.sub(target.encode(), replacement.encode(), unsanitized[i])
+                        else:
+                            unsanitized[i] = re.sub(target, replacement, unsanitized[i])
                 except TypeError:
                     continue
-        return hash_type
+        return unsanitized

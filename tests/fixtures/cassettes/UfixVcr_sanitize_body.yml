@@ -1,0 +1,32 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Authorization:
+      - OBSCURED
+      User-Agent:
+      - OBSCURED
+      X-Amz-Date:
+      - OBSCURED
+      X-Amz-Security-Token:
+      - OBSCURED
+    method: GET
+    uri: https://lambda.us-west-2.amazonaws.com/2015-03-31/functions/unittest_
+  response:
+    body:
+      string: '{"Type":"User","Message":"Function not found: OBSCURED'
+    headers:
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '104'
+      Content-Type:
+      - application/json
+      Date:
+      - Sun, 28 Mar 2021 00:05:37 GMT
+      x-amzn-ErrorType: OBSCURED
+      x-amzn-RequestId: OBSCURED
+    status:
+      code: 404
+      message: Not Found
+version: 1
