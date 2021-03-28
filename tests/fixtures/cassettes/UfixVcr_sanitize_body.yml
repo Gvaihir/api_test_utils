@@ -11,22 +11,22 @@ interactions:
       X-Amz-Security-Token:
       - OBSCURED
     method: GET
-    uri: https://lambda.us-west-2.amazonaws.com/2015-03-31/functions/unittest_
+    uri: https://lambda.us-west-2.amazonaws.com/2015-03-31/functions/
   response:
     body:
-      string: '{"Type":"User","Message":"Function not found: OBSCURED'
+      string: '{"Functions":[{"Description":"An event-driven Lambda function for auto
+        remediating EFS resource policies","TracingConfig":{"Mode":"Active"},"VpcConfig":{"VpcId":"OBSCURED'
     headers:
       Connection:
       - keep-alive
       Content-Length:
-      - '104'
+      - '15281'
       Content-Type:
       - application/json
       Date:
-      - Sun, 28 Mar 2021 00:05:37 GMT
-      x-amzn-ErrorType: OBSCURED
+      - Sun, 28 Mar 2021 00:21:25 GMT
       x-amzn-RequestId: OBSCURED
     status:
-      code: 404
-      message: Not Found
+      code: 200
+      message: OK
 version: 1

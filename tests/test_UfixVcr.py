@@ -47,16 +47,13 @@ class TestUfixVcr(TestCase):
         session = boto3.Session(profile_name='gvaihir')
         l = session.client('lambda')
         vcr = self.ufixtures.sanitize(attributes=['(?i)X-Amz', 'Author', 'User'],
-                                      targets=['arn:aws:.*'])
+                                      targets=['arn:aws:.*', 'vpc-.*', 'sg-.*', 'subnet-.*'])
         with vcr.use_cassette('UfixVcr_sanitize_body.yml'):
-            try:
-                response = l.get_function(FunctionName='unittest_')
-            except:
-                response = None
+            response = l.list_functions()
         with open(os.path.join(curr_dir, 'fixtures/cassettes/UfixVcr_sanitize_body.yml'), 'r') as f:
             fixture = yaml.safe_load(f)
             self.assertTrue(isinstance(fixture, dict))
             self.assertEqual(fixture['interactions'][0]['request']['headers']['X-Amz-Date'][0], 'OBSCURED')
             self.assertTrue("OBSCURED" in fixture['interactions'][0]['response']['body']['string'])
             self.assertFalse("arn" in fixture['interactions'][0]['response']['body']['string'])
-
+            pass
